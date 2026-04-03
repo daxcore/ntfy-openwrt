@@ -1,0 +1,57 @@
+name: build
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: true
+      matrix:
+        release:
+          - 25.12.2
+        arch:
+          - mediatek-filogic
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v6
+
+      - name: Extract package version
+        id: get_version
+        run: |
+          PKG_VERSION=$(grep -r '^PKG_VERSION:=' | cut -d '=' -f2)
+          echo "pkg_version=$PKG_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build package for OpenWRT
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.release }}
+          PACKAGES: ntfy
+          NO_SHFMT_CHECK: true
+          INDEX: 1
+          PRIVATE_KEY: ${{ secrets.SIGNKEY }}
+          V: w
+
+      - name: Extract public key from signing key
+        if: env.HAS_SIGNKEY == 'true'
+        env:
+          HAS_SIGNKEY: ${{ secrets.SIGNKEY != '' }}
+        run: |
+          echo "${{ secrets.SIGNKEY }}" | openssl ec -pubout -out openwrt-daxcore.pem
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: ntfy-${{ steps.get_version.outputs.pkg_version }}-openwrt-${{ matrix.release }}-${{ matrix.arch }}
+          path: bin/packages/**/ntfy*.apk
+
+      - name: Release package
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
+        with:
+          files: |
+            bin/packages/**/action/ntfy*.apk
+            bin/packages/**/action/packages.adb
+            openwrt-daxcore.pem
