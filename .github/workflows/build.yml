@@ -29,4 +29,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ntfy-${{ matrix.arch }}_${{ matrix.release }}
-          path: bin/packages/**/ntfy*.ipk
+          path: bin/packages/**/ntfy*.apk
