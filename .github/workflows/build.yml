@@ -9,7 +9,7 @@ jobs:
       fail-fast: true
       matrix:
         release:
-          - openwrt-24.10
+          - openwrt-25.12
         arch:
           - mediatek-filogic
     steps:
