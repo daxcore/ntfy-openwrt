@@ -1,0 +1,31 @@
+name: build
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        release:
+          - openwrt-24.10
+        arch:
+          - mediatek-filogic
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: openwrt/gh-action-sdk@main
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.release }}
+          PACKAGES: ntfy
+          NO_SHFMT_CHECK: true
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: ntfy-${{ matrix.arch }}_${{ matrix.release }}
+          path: bin/packages/**/ntfy*.ipk
