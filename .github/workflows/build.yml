@@ -23,6 +23,7 @@ jobs:
           ARCH: ${{ matrix.arch }}-${{ matrix.release }}
           PACKAGES: ntfy
           NO_SHFMT_CHECK: true
+          V: s
 
       - name: Upload packages
         uses: actions/upload-artifact@v4
