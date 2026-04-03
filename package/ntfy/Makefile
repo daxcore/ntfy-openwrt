@@ -15,8 +15,8 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
-GO_PKG:=github.com/binwiederhier/ntfy
-GO_PKG_BUILD_PKG:=$(GO_PKG)
+#GO_PKG:=github.com/binwiederhier/ntfy
+#GO_PKG_BUILD_PKG:=$(GO_PKG)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
