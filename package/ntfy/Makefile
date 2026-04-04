@@ -44,6 +44,11 @@ define Package/ntfy/conffiles
 /etc/ntfy.yml
 endef
 
+define Build/Compile
+	mkdir -p $(PKG_BUILD_DIR)/server/docs
+	$(call GoPackage/Package/Compile/Default)
+endef
+
 define Package/ntfy/install
 	$(call GoPackage/Package/Install/Bin,$(1))
 	$(INSTALL_DIR) $(1)/usr/bin
