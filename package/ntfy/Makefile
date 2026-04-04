@@ -46,9 +46,8 @@ endef
 
 define Build/Compile
 	mkdir -p $(PKG_BUILD_DIR)/server/docs
-	$(call GoPackage/Package/Compile/Default)
-	pwd
-	find $(PKG_BUILD_DIR)/.. -name "ntfy"
+	$(call GoPackage/Build/Compile)
+	find $(PKG_BUILD_DIR)/.. -name "ntfy" -type f
 endef
 
 define Package/ntfy/install
