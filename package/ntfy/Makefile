@@ -19,8 +19,9 @@ GO_PKG:=heckel.io/ntfy/v2
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
 	main.version=$(PKG_VERSION) \
-	main.commit=7ce5e8adda99c2887238e56608baca7570a687b8 \
-	main.date=$(SOURCE_DATE_EPOCH)
+	main.commit=$(PKG_VERSION) \
+	main.date=$(PKG_VERSION)
+GO_PKG_TAGS:=sqlite_omit_load_extension,osusergo,netgo
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
