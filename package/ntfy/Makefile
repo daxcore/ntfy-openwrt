@@ -52,8 +52,8 @@ endef
 
 define Package/ntfy/install
 	$(call GoPackage/Package/Install/Bin,$(1))
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/ntfy $(1)/usr/bin/ntfy
+	#$(INSTALL_DIR) $(1)/usr/bin
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/bin/ntfy $(1)/usr/bin/ntfy
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/ntfy.init $(1)/etc/init.d/ntfy
