@@ -45,8 +45,9 @@ define Package/ntfy/conffiles
 endef
 
 define Build/Compile
-	mkdir -p $(PKG_BUILD_DIR)/server/docs
-	touch $(PKG_BUILD_DIR)/server/docs/keep.txt
+	mkdir -p $(PKG_BUILD_DIR)/server/docs server/site
+	touch server/docs/index.html
+	touch server/site/app.html
 	$(call GoPackage/Build/Compile)
 endef
 
