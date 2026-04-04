@@ -16,7 +16,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=heckel.io/ntfy/v2
-GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd
+GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
 	main.version=$(PKG_VERSION) \
 	main.commit=$(PKG_VERSION) \
@@ -47,7 +47,8 @@ endef
 define Build/Compile
 	mkdir -p $(PKG_BUILD_DIR)/server/docs
 	$(call GoPackage/Package/Compile/Default)
-	find $(PKG_BUILD_DIR)
+	pwd
+	find $(PKG_BUILD_DIR)/.. -name "ntfy"
 endef
 
 define Package/ntfy/install
