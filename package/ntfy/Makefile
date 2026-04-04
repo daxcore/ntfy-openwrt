@@ -18,9 +18,9 @@ PKG_BUILD_FLAGS:=no-mips16
 GO_PKG:=heckel.io/ntfy/v2
 GO_PKG_BUILD_PKG:=$(GO_PKG)
 GO_PKG_LDFLAGS_X:= \
-	main.version=$(VERSION) \
-	main.commit=$(COMMIT) \
-	main.date=$(shell date +%s)
+	main.version=$(PKG_VERSION) \
+	main.commit=7ce5e8adda99c2887238e56608baca7570a687b8 \
+	main.date=$(SOURCE_DATE_EPOCH)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
