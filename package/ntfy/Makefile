@@ -41,7 +41,7 @@ define Package/ntfy/description
 endef
 
 define Package/ntfy/conffiles
-	/etc/ntfy.yml
+	/etc/ntfy/server.yml
 endef
 
 define Build/Compile
@@ -58,8 +58,8 @@ define Package/ntfy/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/ntfy.init $(1)/etc/init.d/ntfy
 
-	$(INSTALL_DIR) $(1)/etc
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/server/server.yml $(1)/etc/ntfy.yml
+	$(INSTALL_DIR) $(1)/etc/ntfy
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/server/server.yml $(1)/etc/ntfy/server.yml
 endef
 
 $(eval $(call GoBinPackage,ntfy))
