@@ -47,6 +47,7 @@ endef
 define Build/Compile
 	mkdir -p $(PKG_BUILD_DIR)/server/docs $(PKG_BUILD_DIR)/bin/linux_arm64/
 	$(call GoPackage/Package/Compile/Default)
+	tree $(PKG_BUILD_DIR)
 endef
 
 define Package/ntfy/install
