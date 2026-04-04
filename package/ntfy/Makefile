@@ -41,13 +41,13 @@ define Package/ntfy/description
 endef
 
 define Package/ntfy/conffiles
-/etc/ntfy.yml
+	/etc/ntfy.yml
 endef
 
 define Build/Compile
 	mkdir -p $(PKG_BUILD_DIR)/server/docs
+	touch $(PKG_BUILD_DIR)/server/docs/keep.txt
 	$(call GoPackage/Build/Compile)
-	find $(PKG_BUILD_DIR)/.. -name "ntfy" -type f
 endef
 
 define Package/ntfy/install
