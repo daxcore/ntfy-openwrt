@@ -47,6 +47,26 @@ jobs:
           name: ntfy-${{ steps.get_version.outputs.pkg_version }}-openwrt-${{ matrix.release }}-${{ matrix.arch }}
           path: bin/packages/**/ntfy*.apk
 
+      - name: Deploy to GitHub Pages
+        if: github.ref_type == 'tag'
+        run: |
+          mkdir -p deploy
+          DEST="deploy/releases/${{ matrix.release }}/${{ matrix.arch }}"
+          mkdir -p $DEST
+          find bin/packages/ -name "ntfy*.apk" -exec cp {} $DEST/ \;
+          find bin/packages/ -name "packages.adb" -exec cp {} $DEST/ \;
+          cp openwrt-daxcore.pem deploy/
+          
+      - name: Push to Pages Branch
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref_type == 'tag'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy
+          keep_files: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+
       - name: Release package
         uses: softprops/action-gh-release@v2
         if: github.ref_type == 'tag'
