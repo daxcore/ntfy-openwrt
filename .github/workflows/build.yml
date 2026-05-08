@@ -50,12 +50,21 @@ jobs:
       - name: Deploy to GitHub Pages
         if: github.ref_type == 'tag'
         run: |
-          mkdir -p deploy
           DEST="deploy/releases/${{ matrix.release }}/${{ matrix.arch }}"
           mkdir -p $DEST
           find bin/packages/ -name "ntfy*.apk" -exec cp {} $DEST/ \;
           find bin/packages/ -name "packages.adb" -exec cp {} $DEST/ \;
           cp openwrt-daxcore.pem deploy/
+
+      - name: Generate Index HTML
+        if: github.ref_type == 'tag'
+        working-directory: deploy
+        run: |
+          echo "<html><head><title>OpenWRT Feed</title></head><body>" > index.html
+          echo "<h1>Index of OpenWRT Packages</h1><ul>" >> index.html
+          # Findet alle Dateien rekursiv und erstellt Links
+          find . -type f -not -name "index.html" | sort | sed 's|^\./||' | xargs -I {} echo "<li><a href=\"{}\">{}</a></li>" >> index.html
+          echo "</ul></body></html>" >> index.html
           
       - name: Push to Pages Branch
         uses: peaceiris/actions-gh-pages@v4
