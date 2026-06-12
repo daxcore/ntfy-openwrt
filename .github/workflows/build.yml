@@ -11,7 +11,7 @@ jobs:
       fail-fast: true
       matrix:
         release:
-          - 25.12.2
+          - 25.12.4
         arch:
           - mediatek-filogic
     steps:
@@ -52,20 +52,27 @@ jobs:
         run: |
           DEST="deploy/releases/${{ matrix.release }}/${{ matrix.arch }}"
           mkdir -p $DEST
-          find bin/packages/ -name "ntfy*.apk" -exec cp {} $DEST/ \;
-          find bin/packages/ -name "packages.adb" -exec cp {} $DEST/ \;
+          shopt -s globstar
+          cp bin/packages/**/action/ntfy*.apk $DEST/
+          cp bin/packages/**/action/packages.adb $DEST/
           cp openwrt-daxcore.pem deploy/
 
       - name: Generate Index HTML
         if: github.ref_type == 'tag'
         working-directory: deploy
         run: |
-          echo "<html><head><title>OpenWRT Feed</title></head><body>" > index.html
-          echo "<h1>Index of OpenWRT Packages</h1><ul>" >> index.html
-          # Findet alle Dateien rekursiv und erstellt Links
+          if [ ! -f "index.html" ]; then
+            echo "<html><head><title>OpenWRT Feed</title></head><body>" > index.html
+            echo "<h1>Index of OpenWRT Packages</h1><ul>" >> index.html
+          else
+            sed -i '/<\/ul>/d' index.html
+            sed -i '/<\/body>/d' index.html
+            sed -i '/<\/html>/d' index.html
+          fi
+
           find . -type f -not -name "index.html" | sort | sed 's|^\./||' | xargs -I {} echo "<li><a href=\"{}\">{}</a></li>" >> index.html
           echo "</ul></body></html>" >> index.html
-          
+
       - name: Push to Pages Branch
         uses: peaceiris/actions-gh-pages@v4
         if: github.ref_type == 'tag'
