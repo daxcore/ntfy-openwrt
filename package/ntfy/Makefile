@@ -26,7 +26,8 @@ GO_PKG_LDFLAGS_X:= \
 GO_PKG_TAGS:=sqlite_omit_load_extension,osusergo,netgo,libsqlite3
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/golang/golang-package.mk
+-include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
+
 
 define Package/ntfy
   SECTION:=net
