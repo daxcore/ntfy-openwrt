@@ -41,6 +41,10 @@
                 background: #333;
             }
 
+            pre {
+                background: #333;
+            }
+
             a {
                 color: #66b3ff;
             }
@@ -117,6 +121,25 @@
             border-radius: 4px;
         }
 
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .key-section {
+            margin-bottom: 30px;
+        }
+
+        .key-section h2 {
+            margin-top: 0;
+        }
+
         footer {
             margin-top: 40px;
             padding-top: 20px;
@@ -129,11 +152,31 @@
 
 <body>
 
-<h1>OpenWrt DaxCore Feed</h1>
+<h1>OpenWrt Feed</h1>
 
 <p class="subtitle">
     Automatisch generierter Paket-Feed
 </p>
+
+<div class="release key-section">
+    <h2>OpenWrt DaxCore Signing Key</h2>
+
+    <p>
+        <strong>Download:</strong>
+        <a href="/ntfy-openwrt/openwrt-daxcore.pem">
+            openwrt-daxcore.pem
+        </a>
+    </p>
+
+    <p>
+        <strong>Plaintext:</strong>
+    </p>
+
+    <pre><code>-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmsoa0dDRKEw0W20hRKR1AkPG9pU7
+iANpQ8metkW6USqpTRqtbGnfgEBXlfdxYQIiam/DLmaGnc9gi4YSsAQvXQ==
+-----END PUBLIC KEY-----</code></pre>
+</div>
 
 <div class="release latest">
     <div class="release-header">
