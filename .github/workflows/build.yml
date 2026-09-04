@@ -52,7 +52,6 @@ jobs:
           path: bin/packages/**/ntfy*.apk
 
       - name: Deploy to GitHub Pages
-        if: github.ref_type == 'tag'
         run: |
           DEST="deploy/releases/${{ matrix.release }}/${{ matrix.arch }}"
           mkdir -p $DEST
@@ -63,7 +62,6 @@ jobs:
 
       - name: Push to Pages Branch
         uses: peaceiris/actions-gh-pages@v4
-        if: github.ref_type == 'tag'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./deploy
