@@ -90,6 +90,7 @@ jobs:
           ROOT = Path(".")
           RELEASES = ROOT / "releases"
           INDEX = ROOT / "index.html"
+          PEM_FILE = ROOT / "openwrt-daxcore.pem"
     
           def version_key(version):
               """
@@ -147,7 +148,7 @@ jobs:
                   :root {
                       color-scheme: light dark;
                   }
-    
+
                   body {
                       font-family:
                           system-ui,
@@ -155,44 +156,48 @@ jobs:
                           BlinkMacSystemFont,
                           "Segoe UI",
                           sans-serif;
-    
+
                       max-width: 1100px;
                       margin: 0 auto;
                       padding: 30px 20px;
-    
+
                       background: #f5f5f5;
                       color: #222;
                   }
-    
+
                   @media (prefers-color-scheme: dark) {
                       body {
                           background: #111;
                           color: #eee;
                       }
-    
+
                       .release {
                           background: #1c1c1c;
                       }
-    
+
                       code {
                           background: #333;
                       }
-    
+
+                      pre {
+                          background: #333;
+                      }
+
                       a {
                           color: #66b3ff;
                       }
                   }
-    
+
                   h1 {
                       margin-bottom: 5px;
                   }
-    
+
                   .subtitle {
                       color: #777;
                       margin-top: 0;
                       margin-bottom: 30px;
                   }
-    
+
                   .release {
                       background: white;
                       border-radius: 10px;
@@ -200,18 +205,18 @@ jobs:
                       margin-bottom: 20px;
                       box-shadow: 0 2px 8px rgba(0,0,0,.08);
                   }
-    
+
                   .release.latest {
                       border-left: 5px solid #2e7d32;
                   }
-    
+
                   .release-header {
                       display: flex;
                       align-items: center;
                       gap: 10px;
                       flex-wrap: wrap;
                   }
-    
+
                   .badge {
                       display: inline-block;
                       padding: 3px 8px;
@@ -221,39 +226,58 @@ jobs:
                       font-size: 12px;
                       font-weight: 600;
                   }
-    
+
                   .target {
                       margin-top: 20px;
                   }
-    
+
                   .target h3 {
                       margin-bottom: 8px;
                   }
-    
+
                   ul {
                       margin-top: 5px;
                       padding-left: 25px;
                   }
-    
+
                   li {
                       margin: 6px 0;
                   }
-    
+
                   a {
                       color: #0069d9;
                       text-decoration: none;
                   }
-    
+
                   a:hover {
                       text-decoration: underline;
                   }
-    
+
                   code {
                       background: #eee;
                       padding: 2px 5px;
                       border-radius: 4px;
                   }
-    
+
+                  pre {
+                      background: #eee;
+                      padding: 15px;
+                      border-radius: 6px;
+                      overflow-x: auto;
+                      white-space: pre-wrap;
+                      word-break: break-all;
+                      font-size: 13px;
+                      line-height: 1.5;
+                  }
+
+                  .key-section {
+                      margin-bottom: 30px;
+                  }
+
+                  .key-section h2 {
+                      margin-top: 0;
+                  }
+
                   footer {
                       margin-top: 40px;
                       padding-top: 20px;
@@ -266,11 +290,37 @@ jobs:
     
           <body>
     
-          <h1>OpenWrt DaxCore Feed</h1>
+          <h1>OpenWrt Feed</h1>
     
           <p class="subtitle">
               Automatisch generierter Paket-Feed
           </p>
+          """
+          html += """
+          <div class="release key-section">
+              <h2>OpenWrt Feed Signing Key</h2>
+
+              <p>
+                  <strong>Download:</strong>
+                  <a href="/ntfy-openwrt/openwrt-daxcore.pem">
+                      openwrt-daxcore.pem
+                  </a>
+              </p>
+
+              <p>
+                  <strong>Plaintext:</strong>
+              </p>
+
+              <pre><code>"""
+
+          if PEM_FILE.exists():
+              pem_content = PEM_FILE.read_text(encoding="utf-8").strip()
+              html += escape(pem_content)
+          else:
+              html += "openwrt-daxcore.pem nicht gefunden."
+
+          html += """</code></pre>
+          </div>
           """
     
           if not releases:
