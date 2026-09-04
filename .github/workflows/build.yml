@@ -71,15 +71,6 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Release package
-        uses: softprops/action-gh-release@v2
-        if: github.ref_type == 'tag'
-        with:
-          files: |
-            bin/packages/**/action/ntfy*.apk
-            bin/packages/**/action/packages.adb
-            openwrt-daxcore.pem
-
   generate-index:
     needs: build
     runs-on: ubuntu-latest
