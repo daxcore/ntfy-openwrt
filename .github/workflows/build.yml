@@ -36,7 +36,7 @@ jobs:
           NO_SHFMT_CHECK: true
           INDEX: 1
           PRIVATE_KEY: ${{ secrets.SIGNKEY }}
-          V: w
+          V: sc
 
       - name: Extract public key from signing key
         if: env.HAS_SIGNKEY == 'true'
