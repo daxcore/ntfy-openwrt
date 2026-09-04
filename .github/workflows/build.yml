@@ -2,11 +2,13 @@ name: build
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     strategy:
       fail-fast: true
       matrix:
@@ -15,6 +17,7 @@ jobs:
           - 25.12.5
         arch:
           - mediatek-filogic
+
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v6
@@ -58,22 +61,6 @@ jobs:
           cp bin/packages/**/action/packages.adb $DEST/
           cp openwrt-daxcore.pem deploy/
 
-      - name: Generate Index HTML
-        if: github.ref_type == 'tag'
-        working-directory: deploy
-        run: |
-          if [ ! -f "index.html" ]; then
-            echo "<html><head><title>OpenWRT Feed</title></head><body>" > index.html
-            echo "<h1>Index of OpenWRT Packages</h1><ul>" >> index.html
-          else
-            sed -i '/<\/ul>/d' index.html
-            sed -i '/<\/body>/d' index.html
-            sed -i '/<\/html>/d' index.html
-          fi
-
-          find . -type f -not -name "index.html" | sort | sed 's|^\./||' | xargs -I {} echo "<li><a href=\"{}\">{}</a></li>" >> index.html
-          echo "</ul></body></html>" >> index.html
-
       - name: Push to Pages Branch
         uses: peaceiris/actions-gh-pages@v4
         if: github.ref_type == 'tag'
@@ -92,3 +79,292 @@ jobs:
             bin/packages/**/action/ntfy*.apk
             bin/packages/**/action/packages.adb
             openwrt-daxcore.pem
+
+  generate-index:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+    
+      - name: Generate index.html
+        shell: python
+        run: |
+          from pathlib import Path
+          from html import escape
+          import re
+    
+          ROOT = Path(".")
+          RELEASES = ROOT / "releases"
+          INDEX = ROOT / "index.html"
+    
+          def version_key(version):
+              """
+              Sortiert OpenWrt-Versionen numerisch absteigend.
+              Beispiel:
+              25.12.5 > 25.12.4 > 25.12.2
+              """
+              parts = re.findall(r"\d+", version)
+              return tuple(int(x) for x in parts)
+    
+          releases = []
+    
+          if RELEASES.exists():
+              for release_dir in RELEASES.iterdir():
+                  if not release_dir.is_dir():
+                      continue
+    
+                  release = release_dir.name
+                  targets = []
+    
+                  for target_dir in release_dir.iterdir():
+                      if not target_dir.is_dir():
+                          continue
+    
+                      files = sorted(
+                          [
+                              f for f in target_dir.iterdir()
+                              if f.is_file() and f.name != "index.html"
+                          ],
+                          key=lambda f: f.name.lower()
+                      )
+    
+                      if files:
+                          targets.append((target_dir.name, files))
+    
+                  if targets:
+                      releases.append((release, targets))
+    
+          releases.sort(
+              key=lambda x: version_key(x[0]),
+              reverse=True
+          )
+    
+          latest_release = releases[0][0] if releases else None
+    
+          html = """<!DOCTYPE html>
+          <html lang="de">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+              <title>OpenWrt Feed</title>
+    
+              <style>
+                  :root {
+                      color-scheme: light dark;
+                  }
+    
+                  body {
+                      font-family:
+                          system-ui,
+                          -apple-system,
+                          BlinkMacSystemFont,
+                          "Segoe UI",
+                          sans-serif;
+    
+                      max-width: 1100px;
+                      margin: 0 auto;
+                      padding: 30px 20px;
+    
+                      background: #f5f5f5;
+                      color: #222;
+                  }
+    
+                  @media (prefers-color-scheme: dark) {
+                      body {
+                          background: #111;
+                          color: #eee;
+                      }
+    
+                      .release {
+                          background: #1c1c1c;
+                      }
+    
+                      code {
+                          background: #333;
+                      }
+    
+                      a {
+                          color: #66b3ff;
+                      }
+                  }
+    
+                  h1 {
+                      margin-bottom: 5px;
+                  }
+    
+                  .subtitle {
+                      color: #777;
+                      margin-top: 0;
+                      margin-bottom: 30px;
+                  }
+    
+                  .release {
+                      background: white;
+                      border-radius: 10px;
+                      padding: 20px 25px;
+                      margin-bottom: 20px;
+                      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+                  }
+    
+                  .release.latest {
+                      border-left: 5px solid #2e7d32;
+                  }
+    
+                  .release-header {
+                      display: flex;
+                      align-items: center;
+                      gap: 10px;
+                      flex-wrap: wrap;
+                  }
+    
+                  .badge {
+                      display: inline-block;
+                      padding: 3px 8px;
+                      border-radius: 20px;
+                      background: #2e7d32;
+                      color: white;
+                      font-size: 12px;
+                      font-weight: 600;
+                  }
+    
+                  .target {
+                      margin-top: 20px;
+                  }
+    
+                  .target h3 {
+                      margin-bottom: 8px;
+                  }
+    
+                  ul {
+                      margin-top: 5px;
+                      padding-left: 25px;
+                  }
+    
+                  li {
+                      margin: 6px 0;
+                  }
+    
+                  a {
+                      color: #0069d9;
+                      text-decoration: none;
+                  }
+    
+                  a:hover {
+                      text-decoration: underline;
+                  }
+    
+                  code {
+                      background: #eee;
+                      padding: 2px 5px;
+                      border-radius: 4px;
+                  }
+    
+                  footer {
+                      margin-top: 40px;
+                      padding-top: 20px;
+                      border-top: 1px solid #ccc;
+                      color: #777;
+                      font-size: 13px;
+                  }
+              </style>
+          </head>
+    
+          <body>
+    
+          <h1>OpenWrt DaxCore Feed</h1>
+    
+          <p class="subtitle">
+              Automatisch generierter Paket-Feed
+          </p>
+          """
+    
+          if not releases:
+              html += """
+          <div class="release">
+              <p>Keine Releases gefunden.</p>
+          </div>
+          """
+    
+          for release, targets in releases:
+              latest_class = " latest" if release == latest_release else ""
+    
+              html += f"""
+          <div class="release{latest_class}">
+              <div class="release-header">
+                  <h2>OpenWrt {escape(release)}</h2>
+          """
+    
+              if release == latest_release:
+                  html += '<span class="badge">Latest</span>'
+    
+              html += """
+              </div>
+          """
+    
+              for target, files in targets:
+                  html += f"""
+              <div class="target">
+                  <h3>{escape(target)}</h3>
+                  <ul>
+          """
+    
+                  for file in files:
+                      relative_path = file.as_posix()
+    
+                      # Pfad ausgehend von /releases/
+                      url = "/ntfy-openwrt/" + relative_path
+    
+                      html += f"""
+                      <li>
+                          <a href="{escape(url)}">
+                              {escape(file.name)}
+                          </a>
+                      </li>
+          """
+    
+                  html += """
+                  </ul>
+              </div>
+          """
+    
+              html += """
+          </div>
+          """
+    
+          html += """
+          <footer>
+              Automatically generated by GitHub Actions.
+          </footer>
+    
+          </body>
+          </html>
+          """
+    
+          INDEX.write_text(
+              html,
+              encoding="utf-8"
+          )
+    
+          print(f"Generated {INDEX}")
+          print(f"Releases found: {len(releases)}")
+    
+      - name: Commit generated index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    
+          git add index.html
+    
+          if git diff --cached --quiet; then
+            echo "No changes to index.html"
+            exit 0
+          fi
+    
+          git commit -m "chore: update generated feed index"
+          git push origin gh-pages
