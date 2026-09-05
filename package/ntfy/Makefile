@@ -72,9 +72,9 @@ endef
 # keeps resolving the pinned dependency set.
 define Build/Compile/web
 	cd $(PKG_BUILD_DIR)/web && \
-		$(NPM_ENV) npm install --no-save --no-package-lock --legacy-peer-deps && \
+		$(NPM_ENV) npm ci && \
 		rollup_version=`node -p "require('./node_modules/rollup/package.json').version"` && \
-		$(NPM_ENV) npm install --no-save --no-package-lock \
+		$(NPM_ENV) npm install --no-save --no-package-lock --ignore-scripts --legacy-peer-deps \
 			@rollup/wasm-node@$$$$rollup_version && \
 		rm -rf node_modules/rollup && \
 		mv node_modules/@rollup/wasm-node node_modules/rollup && \
