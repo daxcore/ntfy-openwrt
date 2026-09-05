@@ -13,7 +13,7 @@ jobs:
       fail-fast: true
       matrix:
         release:
-          # - 25.12.4
+          - 25.12.4
           - 25.12.5
         arch:
           - mediatek-filogic
