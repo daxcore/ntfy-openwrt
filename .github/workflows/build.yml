@@ -49,7 +49,11 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: ntfy-${{ steps.get_version.outputs.pkg_version }}-openwrt-${{ matrix.release }}-${{ matrix.arch }}
-          path: bin/packages/**/ntfy*.apk
+          path: |
+            bin/packages/**/ntfy*.apk
+            bin/packages/**/packages.adb
+            bin/packages/**/index.json
+            openwrt-daxcore.pem
 
       - name: Deploy to GitHub Pages
         run: |
@@ -58,6 +62,7 @@ jobs:
           shopt -s globstar
           cp bin/packages/**/action/ntfy*.apk $DEST/
           cp bin/packages/**/action/packages.adb $DEST/
+          cp bin/packages/**/index.json $DEST/
           cp openwrt-daxcore.pem deploy/
 
       - name: Push to Pages Branch
