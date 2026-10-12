@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ntfy
-PKG_VERSION:=2.29.0
+PKG_VERSION:=2.30.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/binwiederhier/ntfy/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=95e672f954b0453f27237e98faecf4fdb92caa1ddf2b54b03ac27d4c0850c9c7
+PKG_HASH:=89562f86c5426696c914b8c4bb6821c6d7454b30b12e864fa9dada8ea367b1b1
 
 PKG_MAINTAINER:=Rosa Hase <github@smnx.addy.io>
 PKG_LICENSE:=Apache-2.0
