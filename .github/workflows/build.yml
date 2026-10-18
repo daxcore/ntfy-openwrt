@@ -15,6 +15,7 @@ jobs:
         release:
           - 25.12.4
           - 25.12.5
+          - 25.12.6
         arch:
           - mediatek-filogic
 
