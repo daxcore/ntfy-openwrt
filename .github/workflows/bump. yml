@@ -45,7 +45,7 @@ jobs:
         if: steps.ver.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          #token: ${{ secrets.PAT_TOKEN }}
           branch: bump-ntfy-${{ steps.ver.outputs.latest }}
           commit-message: "ntfy: update to ${{ steps.ver.outputs.latest }}"
           title: "ntfy: Version bump to ${{ steps.ver.outputs.latest }}"
