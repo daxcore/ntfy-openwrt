@@ -155,7 +155,7 @@ jobs:
               <style>
                   :root {
                       color-scheme: light dark;
-                  
+
                       --bg: #f5f5f5;
                       --fg: #222;
                       --card: #ffffff;
